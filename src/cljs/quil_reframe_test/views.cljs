@@ -12,7 +12,8 @@
   (q/background 255)
   (doseq [{[x y] :pos [r g b] :color [ex ey] :size} circles]
     (q/fill r g b)
-    (q/ellipse x y ex ey)))
+    (q/rect x y ex ey)
+    ))
 
 
 (defn update-state [{:keys [width height] :as state}]
@@ -20,7 +21,7 @@
     (update state :circles conj {:pos   [(+ 20 (rand-int (- width 40)))
                                          (+ 20 (rand-int (- height 40)))]
                                  :color (repeatedly 3 #(rand-int 250))
-                                 :size (repeatedly 2 #(rand-int 30))})
+                                 :size (repeatedly 2 #(rand-int 40))})
     state))
 
 
