@@ -3,4 +3,6 @@
 (def default-db
   {:name "re-frame-quil"
    :update-rate 20
-   :running? false})
+   :running? false
+   :levels 4
+   :divisions 5})

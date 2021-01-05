@@ -8,12 +8,27 @@
    [reagent.dom :as rdom]))
 
 
-(defn draw [{:keys [circles]}]
-  (q/background 255)
-  (doseq [{[x y] :pos [r g b] :color [ex ey] :size} circles]
-    (q/fill r g b)
-    (q/rect x y ex ey)
-    ))
+
+(defn flower [level divs]
+  (if (< 0 level)
+    (do
+      (q/fill 100 200 0)
+      (q/ellipse 0 0 200 200)
+      (doseq [a (map #(* (/ (* Math/PI 2) divs) %) (range 0,divs))]
+        (do
+          (q/push-matrix)
+          (q/scale 0.5)
+          (q/translate 400 0)
+          (q/rotate a)
+          (flower (dec level) divs)
+          (q/pop-matrix))))))
+
+
+(defn draw [{width :width height :height} state]
+  (q/background 155)
+  (q/fill 100 200 255)
+  (q/translate (/ width 2) (/ height 2))
+  (flower @(re-frame/subscribe [:levels]) @(re-frame/subscribe [:divisions])))
 
 
 (defn update-state [{:keys [width height] :as state}]
@@ -43,20 +58,29 @@
            :host node
            :draw draw
            :setup (init width height)
-           :update update-state
+           ;:update update-state
            :size [width height]
            :middleware [m/fun-mode])))
      :render
      (fn [] [:div])}))
 
 
-(defn update-rate-range
+(defn update-levels-range
   []
-  [:div.update-rate
-   "update rate: "
-   [:input {:type "range" :min 0.0 :max 100.0
-            :value @(re-frame/subscribe [:update-rate])        ;; subscribe
-            :on-change #(re-frame/dispatch [:update-rate-change (-> % .-target .-value)])}]])
+  [:div.levels
+   "depth level: "
+   [:input {:type "range" :min 1 :max 10
+            :value @(re-frame/subscribe [:levels])        ;; subscribe
+            :on-change #(re-frame/dispatch [:levels (-> % .-target .-value)])}]])
+
+
+(defn update-divisions-range
+  []
+  [:div.divisions
+   "divisions: "
+   [:input {:type "range" :min 1 :max 20
+            :value @(re-frame/subscribe [:divisions])        ;; subscribe
+            :on-change #(re-frame/dispatch [:divisions (-> % .-target .-value)])}]])
 
 
 (defn main-panel []
@@ -70,5 +94,6 @@
       (if @(re-frame/subscribe [:running?]) "stop" "start")]
      (when @(re-frame/subscribe [:running?])
        [canvas])]
-     [update-rate-range]
+     [update-levels-range]
+     [update-divisions-range]
      ]))

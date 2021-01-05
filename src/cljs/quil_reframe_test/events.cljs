@@ -19,3 +19,13 @@
  :running?
  (fn [db _]
    (assoc db :running? (not (:running? db)))))
+
+(re-frame/reg-event-db
+ :levels
+ (fn [db [_ lvls]]
+   (assoc db :levels lvls)))
+
+(re-frame/reg-event-db
+ :divisions
+ (fn [db [_ divs]]
+   (assoc db :divisions divs)))

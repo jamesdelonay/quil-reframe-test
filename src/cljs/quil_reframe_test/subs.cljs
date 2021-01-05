@@ -18,3 +18,9 @@
  :running?
  (fn [db]
    (:running? db)))
+
+(re-frame/reg-sub
+ :levels
+ (fn [{levels :levels} db] levels))
+
+ (re-frame/reg-sub :divisions #(:divisions %))
