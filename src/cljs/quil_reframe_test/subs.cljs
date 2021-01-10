@@ -23,4 +23,7 @@
  :levels
  (fn [{levels :levels} db] levels))
 
- (re-frame/reg-sub :divisions #(:divisions %))
+(re-frame/reg-sub :divisions #(:divisions %))
+
+(re-frame/reg-sub :translate-val #(:translate-val %))
+

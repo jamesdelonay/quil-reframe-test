@@ -29,3 +29,8 @@
  :divisions
  (fn [db [_ divs]]
    (assoc db :divisions divs)))
+
+(re-frame/reg-event-db
+ :translate-val
+ (fn [db [_ val]]
+   (assoc db :translate-val val)))

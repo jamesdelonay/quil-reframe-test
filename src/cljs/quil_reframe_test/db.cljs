@@ -5,4 +5,5 @@
    :update-rate 20
    :running? false
    :levels 4
-   :divisions 5})
+   :divisions 5
+   :translate-val 400})

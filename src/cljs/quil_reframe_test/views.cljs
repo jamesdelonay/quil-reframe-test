@@ -12,23 +12,27 @@
 (defn flower [level divs]
   (if (< 0 level)
     (do
-      (q/fill 100 200 0)
+      (q/fill (/ 200 level) (/ 255 level) 255)
       (q/ellipse 0 0 200 200)
       (doseq [a (map #(* (/ (* Math/PI 2) divs) %) (range 0,divs))]
         (do
           (q/push-matrix)
           (q/scale 0.5)
-          (q/translate 400 0)
           (q/rotate a)
+          (q/translate @(re-frame/subscribe [:translate-val]) 0)
           (flower (dec level) divs)
-          (q/pop-matrix))))))
+          (q/pop-matrix)))
+      )))
 
 
 (defn draw [{width :width height :height} state]
+  (q/color-mode :hsb)
   (q/background 155)
-  (q/fill 100 200 255)
+  (q/fill 100 255 255)
   (q/translate (/ width 2) (/ height 2))
-  (flower @(re-frame/subscribe [:levels]) @(re-frame/subscribe [:divisions])))
+  (flower @(re-frame/subscribe [:levels]) @(re-frame/subscribe [:divisions]))
+  (q/no-loop)
+  )
 
 
 (defn update-state [{:keys [width height] :as state}]
@@ -69,16 +73,25 @@
   []
   [:div.levels
    "depth level: "
-   [:input {:type "range" :min 1 :max 10
+   [:input {:type "range" :min 1 :max 7
             :value @(re-frame/subscribe [:levels])        ;; subscribe
             :on-change #(re-frame/dispatch [:levels (-> % .-target .-value)])}]])
+
+
+(defn update-translate-range
+  []
+  [:div.levels
+   "translate: "
+   [:input {:type "range" :min 400 :max 600 :step 10
+            :value @(re-frame/subscribe [:translate-val])        ;; subscribe
+            :on-change #(re-frame/dispatch [:translate-val (-> % .-target .-value)])}]])
 
 
 (defn update-divisions-range
   []
   [:div.divisions
    "divisions: "
-   [:input {:type "range" :min 1 :max 20
+   [:input {:type "range" :min 1 :max 10
             :value @(re-frame/subscribe [:divisions])        ;; subscribe
             :on-change #(re-frame/dispatch [:divisions (-> % .-target .-value)])}]])
 
@@ -96,4 +109,5 @@
        [canvas])]
      [update-levels-range]
      [update-divisions-range]
+     [update-translate-range]
      ]))
